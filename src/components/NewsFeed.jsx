@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input } from "@chakra-ui/react";
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
@@ -10,6 +10,8 @@ const NewsFeed = ({ sortOption, category }) => {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const articlesPerPage = 50;
 
   useEffect(() => {
@@ -22,7 +24,7 @@ const NewsFeed = ({ sortOption, category }) => {
             category: category !== 'all' ? category : undefined
           }
         });
-        let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback);
+        let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback, searchQuery);
         if (sortOption === 'date') {
           scoredArticles = scoredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
         } else if (sortOption === 'popularity') {
@@ -37,7 +39,7 @@ const NewsFeed = ({ sortOption, category }) => {
     };
 
     fetchNews();
-  }, [feedback, sortOption, category]);
+  }, [feedback, sortOption, category, searchQuery]);
 
   const handleFeedback = (index, type) => {
     const newFeedback = { ...feedback };
@@ -60,6 +62,17 @@ const NewsFeed = ({ sortOption, category }) => {
     }
   }, []);
 
+  const handleSearchChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    if (query.length > 2) {
+      const matchedSuggestions = articles.filter(article => article.title.includes(query)).map(article => article.title);
+      setSuggestions(matchedSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
@@ -72,6 +85,18 @@ const NewsFeed = ({ sortOption, category }) => {
 
   return (
     <VStack spacing={4} align="stretch">
+      <Input 
+        placeholder="Search articles..." 
+        value={searchQuery} 
+        onChange={handleSearchChange} 
+      />
+      {suggestions.length > 0 && (
+        <Box borderWidth="1px" borderRadius="lg" p={2}>
+          {suggestions.map((suggestion, index) => (
+            <Text key={index}>{suggestion}</Text>
+          ))}
+        </Box>
+      )}
       {currentArticles.map((article, index) => (
         <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
           <Heading size="md">{article.title}</Heading>
