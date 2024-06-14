@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button } from "@chakra-ui/react";
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
@@ -9,6 +9,8 @@ const NewsFeed = ({ sortOption, category }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 50;
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -58,13 +60,19 @@ const NewsFeed = ({ sortOption, category }) => {
     }
   }, []);
 
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   if (loading) {
     return <Spinner size="xl" />;
   }
 
   return (
     <VStack spacing={4} align="stretch">
-      {articles.map((article, index) => (
+      {currentArticles.map((article, index) => (
         <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
           <Heading size="md">{article.title}</Heading>
           <Text mt={2}>{summarizeArticle(article.content)}</Text>
