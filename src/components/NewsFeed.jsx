@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input, SimpleGrid, Image } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input, SimpleGrid, Image, Select } from "@chakra-ui/react";
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
 import { summarizeArticle, fetchContextualLinks } from '../utils/metaContextual';
 
-const NewsFeed = ({ sortOption, category }) => {
+const NewsFeed = ({ sortOption, category, source }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({});
@@ -23,7 +23,8 @@ const NewsFeed = ({ sortOption, category }) => {
           params: {
             country: 'us',
             apiKey: 'YOUR_NEWS_API_KEY',
-            category: category !== 'all' ? category : undefined
+            category: category !== 'all' ? category : undefined,
+            sources: source !== 'all' ? source : undefined
           }
         });
         let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback, searchQuery);
@@ -42,7 +43,7 @@ const NewsFeed = ({ sortOption, category }) => {
     };
 
     fetchNews();
-  }, [feedback, sortOption, category, searchQuery]);
+  }, [feedback, sortOption, category, source, searchQuery]);
 
   const handleFeedback = (index, type) => {
     const newFeedback = { ...feedback };
