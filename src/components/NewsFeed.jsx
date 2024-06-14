@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Heading, Text, VStack, Spinner } from "@chakra-ui/react";
 import axios from 'axios';
+import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
 
 const NewsFeed = () => {
   const [articles, setArticles] = useState([]);
@@ -15,7 +16,8 @@ const NewsFeed = () => {
             apiKey: 'YOUR_NEWS_API_KEY'
           }
         });
-        setArticles(response.data.articles);
+        const scoredArticles = scoreArticlesByRelevance(response.data.articles);
+        setArticles(scoredArticles);
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
