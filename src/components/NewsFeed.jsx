@@ -5,7 +5,7 @@ import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
 import { summarizeArticle, fetchContextualLinks } from '../utils/metaContextual';
 
-const NewsFeed = () => {
+const NewsFeed = ({ sortOption, category }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({});
@@ -16,10 +16,16 @@ const NewsFeed = () => {
         const response = await axios.get('https://newsapi.org/v2/top-headlines', {
           params: {
             country: 'us',
-            apiKey: 'YOUR_NEWS_API_KEY'
+            apiKey: 'YOUR_NEWS_API_KEY',
+            category: category !== 'all' ? category : undefined
           }
         });
-        const scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback);
+        let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback);
+        if (sortOption === 'date') {
+          scoredArticles = scoredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+        } else if (sortOption === 'popularity') {
+          scoredArticles = scoredArticles.sort((a, b) => b.popularity - a.popularity);
+        }
         setArticles(scoredArticles);
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -29,7 +35,7 @@ const NewsFeed = () => {
     };
 
     fetchNews();
-  }, [feedback]);
+  }, [feedback, sortOption, category]);
 
   const handleFeedback = (index, type) => {
     const newFeedback = { ...feedback };
