@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Container, Text, VStack, Input, Button, Box, HStack, Select, Flex, Heading, Link } from "@chakra-ui/react";
 import { analyzeQuery, matchQueryToThemes } from '../utils/nlp';
 import NewsFeed from '../components/NewsFeed';
+import Footer from '../components/Footer';
 
 const Index = () => {
   const [query, setQuery] = useState('');
@@ -109,6 +110,7 @@ const Index = () => {
           </Box>
         </Flex>
       </VStack>
+      <Footer />
     </Container>
   );
 };
