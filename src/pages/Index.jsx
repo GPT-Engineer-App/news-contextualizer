@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Container, Text, VStack, Input, Button, Box } from "@chakra-ui/react";
-import { analyzeQuery } from '../utils/nlp';
-
-// Example of using react-icons
-// import { FaRocket } from "react-icons/fa";
-// <IconButton aria-label="Add" icon={<FaRocket />} size="lg" />; // IconButton would also have to be imported from chakra
+import { analyzeQuery, matchQueryToThemes } from '../utils/nlp';
 
 const Index = () => {
   const [query, setQuery] = useState('');
   const [analysis, setAnalysis] = useState(null);
+  const [matchedThemes, setMatchedThemes] = useState(null);
 
   const handleAnalyze = () => {
     const result = analyzeQuery(query);
     setAnalysis(result);
+    const themes = matchQueryToThemes(query);
+    setMatchedThemes(themes);
   };
+
   return (
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <VStack spacing={4}>
@@ -29,6 +29,12 @@ const Index = () => {
           <Box mt={4} p={4} borderWidth="1px" borderRadius="lg">
             <Text fontSize="lg">Topics: {analysis.topics.join(', ')}</Text>
             <Text fontSize="lg">Themes: {analysis.themes.join(', ')}</Text>
+          </Box>
+        )}
+        {matchedThemes && (
+          <Box mt={4} p={4} borderWidth="1px" borderRadius="lg">
+            <Text fontSize="lg">Matched Themes:</Text>
+            <pre>{JSON.stringify(matchedThemes, null, 2)}</pre>
           </Box>
         )}
       </VStack>
