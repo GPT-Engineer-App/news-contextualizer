@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Container, Text, VStack, Input, Button, Box } from "@chakra-ui/react";
 import { analyzeQuery, matchQueryToThemes } from '../utils/nlp';
+import NewsFeed from '../components/NewsFeed';
 
 const Index = () => {
   const [query, setQuery] = useState('');
@@ -37,6 +38,7 @@ const Index = () => {
             <pre>{JSON.stringify(matchedThemes, null, 2)}</pre>
           </Box>
         )}
+        <NewsFeed />
       </VStack>
     </Container>
   );
