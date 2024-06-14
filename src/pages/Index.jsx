@@ -52,6 +52,10 @@ const Index = () => {
             <option value="technology">Technology</option>
             <option value="health">Health</option>
             <option value="business">Business</option>
+            <option value="entertainment">Entertainment</option>
+            <option value="sports">Sports</option>
+            <option value="science">Science</option>
+            <option value="world">World</option>
           </Select>
           <Select placeholder="Source" value={source} onChange={(e) => setSource(e.target.value)}>
             <option value="all">All</option>
@@ -63,7 +67,7 @@ const Index = () => {
           </Select>
         </HStack>
         <Flex width="full" mt={4}>
-          <Box width="20%" p={4} borderWidth="1px" borderRadius="lg">
+          <Box width="20%" p={4} borderWidth="1px" borderRadius="lg" bg="gray.50">
             <Heading size="md" mb={4}>Categories</Heading>
             <VStack align="start">
               <Link href="#">Technology</Link>
@@ -71,6 +75,11 @@ const Index = () => {
               <Link href="#">Business</Link>
               <Link href="#">Entertainment</Link>
               <Link href="#">Sports</Link>
+              <Link href="#">Science</Link>
+              <Link href="#">World</Link>
+              <Link href="#">Politics</Link>
+              <Link href="#">Travel</Link>
+              <Link href="#">Lifestyle</Link>
             </VStack>
             <Heading size="md" mt={8} mb={4}>Trending Tags</Heading>
             <VStack align="start">
@@ -79,12 +88,17 @@ const Index = () => {
               <Link href="#">#Elections</Link>
               <Link href="#">#ClimateChange</Link>
               <Link href="#">#Startups</Link>
+              <Link href="#">#Space</Link>
+              <Link href="#">#Technology</Link>
+              <Link href="#">#HealthTech</Link>
+              <Link href="#">#FinTech</Link>
+              <Link href="#">#GreenEnergy</Link>
             </VStack>
           </Box>
           <Box width="60%" p={4}>
             <NewsFeed sortOption={sortOption} category={category} source={source} />
           </Box>
-          <Box width="20%" p={4} borderWidth="1px" borderRadius="lg">
+          <Box width="20%" p={4} borderWidth="1px" borderRadius="lg" bg="gray.50">
             <Heading size="md" mb={4}>Further Reading</Heading>
             <VStack align="start">
               <Link href="#">Contact Us</Link>
