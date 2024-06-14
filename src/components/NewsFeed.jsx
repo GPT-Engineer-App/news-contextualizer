@@ -12,6 +12,8 @@ const NewsFeed = ({ sortOption, category }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageInput, setPageInput] = useState('');
   const articlesPerPage = 50;
 
   useEffect(() => {
@@ -31,6 +33,7 @@ const NewsFeed = ({ sortOption, category }) => {
           scoredArticles = scoredArticles.sort((a, b) => b.popularity - a.popularity);
         }
         setArticles(scoredArticles);
+        setTotalPages(Math.ceil(scoredArticles.length / articlesPerPage));
       } catch (error) {
         console.error('Error fetching news:', error);
       } finally {
@@ -71,6 +74,18 @@ const NewsFeed = ({ sortOption, category }) => {
     } else {
       setSuggestions([]);
     }
+  };
+
+  const handlePageInputChange = (e) => {
+    setPageInput(e.target.value);
+  };
+
+  const handlePageInputSubmit = () => {
+    const pageNumber = parseInt(pageInput, 10);
+    if (!isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+    setPageInput('');
   };
 
   const indexOfLastArticle = currentPage * articlesPerPage;
@@ -125,6 +140,18 @@ const NewsFeed = ({ sortOption, category }) => {
           </HStack>
         </Box>
       ))}
+      <HStack spacing={2} mt={4} justifyContent="center">
+        <Button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>Previous</Button>
+        <Text>Page {currentPage} of {totalPages}</Text>
+        <Button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>Next</Button>
+        <Input
+          placeholder="Go to page..."
+          value={pageInput}
+          onChange={handlePageInputChange}
+          width="100px"
+        />
+        <Button onClick={handlePageInputSubmit}>Go</Button>
+      </HStack>
     </VStack>
   );
 };
