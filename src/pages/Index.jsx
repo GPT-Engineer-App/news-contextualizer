@@ -9,6 +9,7 @@ const Index = () => {
   const [matchedThemes, setMatchedThemes] = useState(null);
   const [sortOption, setSortOption] = useState('relevance');
   const [category, setCategory] = useState('all');
+  const [source, setSource] = useState('all');
 
   const handleAnalyze = () => {
     const result = analyzeQuery(query);
@@ -52,6 +53,14 @@ const Index = () => {
             <option value="health">Health</option>
             <option value="business">Business</option>
           </Select>
+          <Select placeholder="Source" value={source} onChange={(e) => setSource(e.target.value)}>
+            <option value="all">All</option>
+            <option value="bbc-news">BBC News</option>
+            <option value="cnn">CNN</option>
+            <option value="fox-news">Fox News</option>
+            <option value="the-new-york-times">The New York Times</option>
+            <option value="the-guardian-uk">The Guardian</option>
+          </Select>
         </HStack>
         <Flex width="full" mt={4}>
           <Box width="20%" p={4} borderWidth="1px" borderRadius="lg">
@@ -73,7 +82,7 @@ const Index = () => {
             </VStack>
           </Box>
           <Box width="60%" p={4}>
-            <NewsFeed sortOption={sortOption} category={category} />
+            <NewsFeed sortOption={sortOption} category={category} source={source} />
           </Box>
           <Box width="20%" p={4} borderWidth="1px" borderRadius="lg">
             <Heading size="md" mb={4}>Further Reading</Heading>
