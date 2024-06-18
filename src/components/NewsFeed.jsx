@@ -28,6 +28,7 @@ const NewsFeed = ({ sortOption, category, source }) => {
             sources: source !== 'all' ? source : undefined
           }
         });
+        console.log('Fetched articles:', response.data.articles);
         let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback, searchQuery);
         if (sortOption === 'date') {
           scoredArticles = scoredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
