@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input, SimpleGrid, Image, Select } from "@chakra-ui/react";
+import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input, SimpleGrid, Image, Select, Tooltip } from "@chakra-ui/react";
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
 import { summarizeArticle, fetchContextualLinks } from '../utils/metaContextual';
@@ -115,34 +116,40 @@ const NewsFeed = ({ sortOption, category, source }) => {
       )}
       <SimpleGrid columns={{ sm: 1, md: 2, lg: 3 }} spacing={4}>
         {currentArticles.map((article, index) => (
-          <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
-            <Image src={article.urlToImage} alt={article.title} borderRadius="md" />
-            <Heading size="md" mt={2}>{article.title}</Heading>
-            <Text mt={2}>{summarizeArticle(article.content)}</Text>
-            <Text mt={2} fontSize="sm" color="gray.500">By {article.author || 'Unknown Author'} on {new Date(article.publishedAt).toLocaleDateString()}</Text>
-            <Text mt={2} fontSize="sm" color="gray.500">{article.source.name}</Text>
-            <VStack mt={2} align="start">
-              {fetchContextualLinks(article).map((link, linkIndex) => (
-                <Link key={linkIndex} href={link.url} isExternal color="teal.500">
-                  {link.title}
-                </Link>
-              ))}
-            </VStack>
-            <HStack mt={2}>
-              <IconButton
-                icon={<FaThumbsUp />}
-                onClick={() => handleFeedback(index, 'up')}
-                aria-label="Thumbs Up"
-              />
-              <IconButton
-                icon={<FaThumbsDown />}
-                onClick={() => handleFeedback(index, 'down')}
-                aria-label="Thumbs Down"
-              />
-              <Text>{feedback[index] ? feedback[index].up : 0} Upvotes</Text>
-              <Text>{feedback[index] ? feedback[index].down : 0} Downvotes</Text>
-            </HStack>
-          </Box>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} key={index}>
+            <Box p={4} borderWidth="1px" borderRadius="lg">
+              <Image src={article.urlToImage} alt={article.title} borderRadius="md" />
+              <Tooltip label="Article Title" aria-label="Article Title Tooltip">
+                <Heading size="md" mt={2}>{article.title}</Heading>
+              </Tooltip>
+              <Text mt={2}>{summarizeArticle(article.content)}</Text>
+              <Tooltip label="Author of the article" aria-label="Author Tooltip">
+                <Text mt={2} fontSize="sm" color="gray.500">By {article.author || 'Unknown Author'} on {new Date(article.publishedAt).toLocaleDateString()}</Text>
+              </Tooltip>
+              <Text mt={2} fontSize="sm" color="gray.500">{article.source.name}</Text>
+              <VStack mt={2} align="start">
+                {fetchContextualLinks(article).map((link, linkIndex) => (
+                  <Link key={linkIndex} href={link.url} isExternal color="teal.500">
+                    {link.title}
+                  </Link>
+                ))}
+              </VStack>
+              <HStack mt={2}>
+                <IconButton
+                  icon={<FaThumbsUp />}
+                  onClick={() => handleFeedback(index, 'up')}
+                  aria-label="Thumbs Up"
+                />
+                <IconButton
+                  icon={<FaThumbsDown />}
+                  onClick={() => handleFeedback(index, 'down')}
+                  aria-label="Thumbs Down"
+                />
+                <Text>{feedback[index] ? feedback[index].up : 0} Upvotes</Text>
+                <Text>{feedback[index] ? feedback[index].down : 0} Downvotes</Text>
+              </HStack>
+            </Box>
+          </motion.div>
         ))}
       </SimpleGrid>
       <HStack spacing={2} mt={4} justifyContent="center">
