@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Box, Heading, Text, VStack, Spinner, Link, HStack, IconButton, Button, Input, SimpleGrid, Image, Select } from "@chakra-ui/react";
 import { FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
 import axios from 'axios';
+import NodeCache from 'node-cache';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
+
+const newsCache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
 import { summarizeArticle, fetchContextualLinks } from '../utils/metaContextual';
 
 const NewsFeed = ({ sortOption, category, source }) => {
@@ -18,6 +21,16 @@ const NewsFeed = ({ sortOption, category, source }) => {
 
   useEffect(() => {
     const fetchNews = async () => {
+      const cacheKey = `${category}-${source}-${sortOption}-${searchQuery}`;
+      const cachedArticles = newsCache.get(cacheKey);
+
+      if (cachedArticles) {
+        setArticles(cachedArticles);
+        setTotalPages(Math.ceil(cachedArticles.length / articlesPerPage));
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await axios.get('https://newsapi.org/v2/top-headlines', {
           params: {
@@ -33,6 +46,7 @@ const NewsFeed = ({ sortOption, category, source }) => {
         } else if (sortOption === 'popularity') {
           scoredArticles = scoredArticles.sort((a, b) => b.popularity - a.popularity);
         }
+        newsCache.set(cacheKey, scoredArticles);
         setArticles(scoredArticles);
         setTotalPages(Math.ceil(scoredArticles.length / articlesPerPage));
       } catch (error) {
