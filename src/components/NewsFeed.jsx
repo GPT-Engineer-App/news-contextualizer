@@ -28,7 +28,7 @@ const NewsFeed = ({ sortOption, category, source }) => {
             sources: source !== 'all' ? source : undefined
           }
         });
-        console.log('Fetched articles:', response.data.articles);
+        console.log('Fetched articles:', response.data.articles); // Add this line
         let scoredArticles = scoreArticlesByRelevance(response.data.articles, feedback, searchQuery);
         if (sortOption === 'date') {
           scoredArticles = scoredArticles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
@@ -46,6 +46,10 @@ const NewsFeed = ({ sortOption, category, source }) => {
 
     fetchNews();
   }, [feedback, sortOption, category, source, searchQuery]);
+
+  useEffect(() => {
+    console.log('Articles state updated:', articles); // Add this line
+  }, [articles]);
 
   const handleFeedback = (index, type) => {
     const newFeedback = { ...feedback };
@@ -94,6 +98,7 @@ const NewsFeed = ({ sortOption, category, source }) => {
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
+  console.log('Current articles:', currentArticles); // Add this line
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
