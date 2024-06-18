@@ -6,7 +6,7 @@ import axios from 'axios';
 import { scoreArticlesByRelevance } from '../utils/relevanceScoring';
 import { summarizeArticle, fetchContextualLinks } from '../utils/metaContextual';
 
-const NewsFeed = ({ sortOption, category, source }) => {
+const NewsFeed = ({ sortOption, category, source, tag }) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState({});
@@ -25,7 +25,8 @@ const NewsFeed = ({ sortOption, category, source }) => {
             country: 'us',
             apiKey: 'YOUR_NEWS_API_KEY',
             category: category !== 'all' ? category : undefined,
-            sources: source !== 'all' ? source : undefined
+            sources: source !== 'all' ? source : undefined,
+            q: tag ? tag : undefined
           }
         });
         console.log('Fetched articles:', response.data.articles); // Add this line
@@ -45,7 +46,7 @@ const NewsFeed = ({ sortOption, category, source }) => {
     };
 
     fetchNews();
-  }, [feedback, sortOption, category, source, searchQuery]);
+  }, [feedback, sortOption, category, source, searchQuery, tag]);
 
   useEffect(() => {
     console.log('Articles state updated:', articles); // Add this line
